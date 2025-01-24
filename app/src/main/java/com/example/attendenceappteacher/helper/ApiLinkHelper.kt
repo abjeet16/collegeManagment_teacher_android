@@ -14,4 +14,8 @@ class ApiLinkHelper {
     fun getMyClassesApiUri(): String? {
         return BASE_URL+"teacher/my_classes"
     }
+
+    fun getStudentsOfClassApiUri(classId: Int): String {
+        return BASE_URL + "teacher/$classId/students"
+    }
 }

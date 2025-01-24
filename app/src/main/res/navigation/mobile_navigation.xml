@@ -9,7 +9,11 @@
         android:id="@+id/nav_home"
         android:name="com.example.attendenceappteacher.ui.home.HomeFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_nav_home_to_attendenceFragment"
+            app:destination="@id/attendenceFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_gallery"
@@ -22,4 +26,18 @@
         android:name="com.example.attendenceappteacher.ui.slideshow.SlideshowFragment"
         android:label="@string/menu_slideshow"
         tools:layout="@layout/fragment_slideshow" />
+    <fragment
+        android:id="@+id/attendenceFragment"
+        android:name="com.example.attendenceappteacher.ui.attendence.AttendanceFragment"
+        android:label="fragment_attendence"
+        tools:layout="@layout/fragment_attendence" >
+        <argument
+            android:name="classId"
+            app:argType="long"
+            android:defaultValue="-1L" />
+        <argument
+            android:name="subjectId"
+            app:argType="long"
+            android:defaultValue="-1L" />
+    </fragment>
 </navigation>

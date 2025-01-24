@@ -3,11 +3,12 @@ package com.example.attendenceappteacher.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.attendenceappteacher.data_class.ClassEntity
+import com.example.attendenceappteacher.data_class.MyClassResponse
 import com.example.attendenceappteacher.databinding.ItemClassBinding
 
 class ClassAdapter(
-    private val classList: List<ClassEntity.ClassEntityItem>
+    private val classList: MyClassResponse,
+    private val onItemClick: (MyClassResponse, Int) -> Unit,
 ) : RecyclerView.Adapter<ClassAdapter.ClassViewHolder>() {
 
     // ViewHolder using View Binding
@@ -19,8 +20,10 @@ class ClassAdapter(
     }
 
     override fun onBindViewHolder(holder: ClassViewHolder, position: Int) {
-        val classItem = classList[position]
-        holder.binding.classItem = classItem // Set the data in binding
+        holder.binding.classItem = classList.get(position) // Set the data in binding
+        holder.binding.root.setOnClickListener {
+            onItemClick(classList,position)
+        }
         holder.binding.executePendingBindings() // Notify binding to refresh immediately
     }
 

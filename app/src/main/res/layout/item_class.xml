@@ -4,35 +4,124 @@
     <data>
         <variable
             name="classItem"
-            type="com.example.attendenceappteacher.data_class.ClassEntity.ClassEntityItem" />
+            type="com.example.attendenceappteacher.data_class.MyClassResponse.MyClassResponseItem" />
     </data>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="8dp">
+        android:padding="16dp"
+        android:background="@drawable/rounded_corner_background"
+        android:elevation="4dp"
+        android:layout_margin="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tvBatchYearLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Batch Year:"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="#000000"
+            android:layout_marginEnd="8dp" />
 
         <TextView
             android:id="@+id/tvBatchYear"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{String.valueOf(classItem.batchYear)}"
-            android:textSize="16sp" />
+            android:text="@{String.valueOf(classItem.ClassEntity.batchYear)}"
+            android:textSize="16sp"
+            android:textColor="#000000" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="8dp">
+
+        <TextView
+            android:id="@+id/tvSectionLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Section:"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="#000000"
+            android:layout_marginEnd="8dp" />
 
         <TextView
             android:id="@+id/tvSection"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{classItem.section}"
-            android:textSize="16sp" />
+            android:text="@{classItem.ClassEntity.section}"
+            android:textSize="16sp"
+            android:textColor="#000000" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="8dp">
+
+        <TextView
+            android:id="@+id/tvCourseNameLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Course Name:"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="#000000"
+            android:layout_marginEnd="8dp" />
 
         <TextView
             android:id="@+id/tvCourseName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{classItem.course.courseName}"
-            android:textSize="16sp" />
-
+            android:text="@{classItem.ClassEntity.course.courseName}"
+            android:textSize="16sp"
+            android:textColor="#000000" />
     </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="8dp">
+
+            <TextView
+                android:id="@+id/tvSubjectNameLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Subject Name:"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="#000000"
+                android:layout_marginEnd="8dp" />
+
+            <TextView
+                android:id="@+id/tvSubjectName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{classItem.subject.subjectName}"
+                android:textSize="16sp"
+                android:textColor="#000000" />
+        </LinearLayout>
+
+</LinearLayout>
+
 </layout>
+
+
+

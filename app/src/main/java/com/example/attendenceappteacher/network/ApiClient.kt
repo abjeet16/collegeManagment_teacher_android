@@ -10,7 +10,8 @@ import com.example.attendanceappstudent.data_class.UserLoginRequest
 import com.example.attendanceappstudent.data_class.UserLoginResponse
 import com.example.attendanceappstudent.data_class.UserProfile
 import com.example.attendanceappstudent.helper.ApiLinkHelper
-import com.example.attendenceappteacher.data_class.ClassEntity
+import com.example.attendenceappteacher.data_class.AllStudentsOfAClass
+import com.example.attendenceappteacher.data_class.MyClassResponse
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import org.json.JSONObject
@@ -122,7 +123,7 @@ class ApiClient private constructor(context: Context) {
 
     fun getMyClasses(
         token: String,
-        onSuccess: (ClassEntity) -> Unit,
+        onSuccess: (MyClassResponse) -> Unit,
         onError: (String) -> Unit
     ) {
         val jsonArrayRequest = object : JsonArrayRequest(
@@ -132,10 +133,56 @@ class ApiClient private constructor(context: Context) {
             { response ->  // Success listener
                 try {
                     // Parse the JSON response into ClassEntity
-                    val classes = Gson().fromJson(response.toString(), ClassEntity::class.java)
+                    val classes = Gson().fromJson(response.toString(), MyClassResponse::class.java)
                     Log.d("MyClasses", "Retrieved classes: $classes")
                     onSuccess(classes)
                 } catch (e: Exception) {
+                    onError("Failed to parse the server response.")
+                }
+            },
+            { error ->  // Error listener
+                if (error.networkResponse != null) {
+                    val errorResponse = String(error.networkResponse.data)
+                    Log.e("ApiClient", "Error Response: $errorResponse")
+                    onError(errorResponse)
+                } else {
+                    Log.e("ApiClient", "Unknown Error: ${error.message}")
+                    onError(error.message ?: "Unknown error occurred.")
+                }
+            }
+        ) {
+            // Add Authorization header with Bearer token
+            override fun getHeaders(): Map<String, String> {
+                val headers = mutableMapOf<String, String>()
+                headers["Authorization"] = "Bearer $token"
+                return headers
+            }
+        }
+
+        // Add the request to the queue
+        requestQueue.add(jsonArrayRequest)
+    }
+
+    fun getStudentsOfClass(
+        token: String,
+        classId: Int,
+        onSuccess: (List<AllStudentsOfAClass>) -> Unit,
+        onError: (String) -> Unit
+    ) {
+        val url = "${apiLinkHelper.getStudentsOfClassApiUri(classId)}" // Construct the URL
+
+        val jsonArrayRequest = object : JsonArrayRequest(
+            Method.GET,  // HTTP GET method
+            url,  // Full API URL with classId
+            null,  // No body for GET requests
+            { response ->  // Success listener
+                try {
+                    // Parse the JSON response into a List of AllStudentsOfAClass
+                    val students = Gson().fromJson(response.toString(), Array<AllStudentsOfAClass>::class.java).toList()
+                    Log.d("StudentsOfClass", "Retrieved students: $students")
+                    onSuccess(students)
+                } catch (e: Exception) {
+                    Log.e("StudentsOfClass", "Parsing error: ${e.message}")
                     onError("Failed to parse the server response.")
                 }
             },
