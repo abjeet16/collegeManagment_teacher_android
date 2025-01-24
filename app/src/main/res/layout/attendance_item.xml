@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="student"
+            type="com.example.attendenceappteacher.data_class.AllStudentsOfAClass" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:layout_margin="5dp"
+        android:gravity="center_vertical"
+        android:background="@drawable/rounded_corner_background">
+
+        <!-- Text Layout (UCCMS ID and Student Name stacked vertically) -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <!-- UCCMS ID -->
+            <TextView
+                android:id="@+id/tvUccmsId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{student.studentId}"
+                android:textSize="14sp"
+                android:textColor="#666" />
+
+            <!-- Student Name -->
+            <TextView
+                android:id="@+id/tvStudentName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{student.studentName}"
+                android:textSize="16sp"
+                android:textColor="#000" />
+        </LinearLayout>
+
+        <!-- Attendance Toggle -->
+        <ToggleButton
+            android:id="@+id/toggleAttendance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/toggle_button_selector"
+            android:textOff="Absent"
+            android:textOn="Present" />
+    </LinearLayout>
+</layout>
+
+

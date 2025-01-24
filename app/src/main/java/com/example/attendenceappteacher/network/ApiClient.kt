@@ -10,10 +10,12 @@ import com.example.attendanceappstudent.data_class.UserLoginRequest
 import com.example.attendanceappstudent.data_class.UserLoginResponse
 import com.example.attendanceappstudent.data_class.UserProfile
 import com.example.attendanceappstudent.helper.ApiLinkHelper
+import com.example.attendenceappteacher.data_class.AddAttendance
 import com.example.attendenceappteacher.data_class.AllStudentsOfAClass
 import com.example.attendenceappteacher.data_class.MyClassResponse
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import org.json.JSONArray
 import org.json.JSONObject
 
 class ApiClient private constructor(context: Context) {
@@ -169,7 +171,7 @@ class ApiClient private constructor(context: Context) {
         onSuccess: (List<AllStudentsOfAClass>) -> Unit,
         onError: (String) -> Unit
     ) {
-        val url = "${apiLinkHelper.getStudentsOfClassApiUri(classId)}" // Construct the URL
+        val url = apiLinkHelper.getStudentsOfClassApiUri(classId) // Construct the URL
 
         val jsonArrayRequest = object : JsonArrayRequest(
             Method.GET,  // HTTP GET method
@@ -208,4 +210,63 @@ class ApiClient private constructor(context: Context) {
         // Add the request to the queue
         requestQueue.add(jsonArrayRequest)
     }
+
+    fun markAttendance(
+        token: String,
+        classId: Long,
+        subjectId: Long,
+        schedulePeriod: Int,
+        attendanceRecords: List<AddAttendance>,
+        onSuccess: (String) -> Unit,
+        onError: (String) -> Unit
+    ) {
+
+        val url = apiLinkHelper.markAttendanceApiUri()
+
+        val jsonBody = JSONObject().apply {
+            put("classId", classId)
+            put("subjectId", subjectId)
+            put("schedulePeriod", schedulePeriod)
+            put("attendanceRecords", JSONArray(attendanceRecords.map {
+                JSONObject().apply {
+                    put("studentId", it.studentId)
+                    put("isPresent", it.isPresent)
+                }
+            }))
+        }
+
+        val jsonObjectRequest = object : JsonObjectRequest(
+            Method.POST,
+            apiLinkHelper.markAttendanceApiUri(),
+            jsonBody,
+            { response ->  // Success listener
+                try {
+                    Log.d("MarkAttendance", "Response: $response")
+                    onSuccess("Attendance marked successfully!")
+                } catch (e: Exception) {
+                    Log.e("MarkAttendance", "Parsing error: ${e.message}")
+                    onError("Failed to parse server response.")
+                }
+            },
+            { error ->  // Error listener
+                if (error.networkResponse != null) {
+                    val errorResponse = String(error.networkResponse.data)
+                    Log.e("MarkAttendance", "Error Response: $errorResponse")
+                    onError(errorResponse)
+                } else {
+                    Log.e("MarkAttendance", "Unknown Error: ${error.message}")
+                    onError(error.message ?: "Unknown error occurred.")
+                }
+            }
+        ) {
+            // Add Authorization header with Bearer token
+            override fun getHeaders(): Map<String, String> {
+                return mapOf("Authorization" to "Bearer $token")
+            }
+        }
+
+        // Add the request to the queue
+        requestQueue.add(jsonObjectRequest)
+    }
+
 }
