@@ -29,7 +29,7 @@
     <fragment
         android:id="@+id/attendenceFragment"
         android:name="com.example.attendenceappteacher.ui.attendence.AttendanceFragment"
-        android:label="fragment_attendence"
+        android:label="Mark Attendance"
         tools:layout="@layout/fragment_attendence" >
         <argument
             android:name="classId"

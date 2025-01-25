@@ -1,9 +1,11 @@
 package com.example.attendenceappteacher
 
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
 import android.widget.TextView
 import android.widget.Toast
 import com.google.android.material.snackbar.Snackbar
@@ -23,7 +25,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
-    private lateinit var sharedPreferences : SharedPreferences
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,8 +40,7 @@ class MainActivity : AppCompatActivity() {
         val drawerLayout: DrawerLayout = binding.drawerLayout
         val navView: NavigationView = binding.navView
         val navController = findNavController(R.id.nav_host_fragment_content_main)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
+
         appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow
@@ -60,6 +61,16 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_settings -> {
+                performLogout()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
@@ -69,24 +80,17 @@ class MainActivity : AppCompatActivity() {
         ApiClient.getInstance(this).getUserProfile(
             token = token,
             onSuccess = { userProfile ->
-                // Handle the success response
-                // userProfile is of type UserProfile
                 Log.d("UserProfile", "User Profile: ${userProfile.first_name}, ${userProfile.email}")
                 setUserData(binding.navView, userProfile)
             },
             onError = { errorMessage ->
-                // Handle the error response
                 Log.e("UserProfile", "Error: $errorMessage")
-
-                // Show error message to user, for example:
                 Toast.makeText(this, "Failed to fetch user profile: $errorMessage", Toast.LENGTH_SHORT).show()
             }
         )
     }
 
     private fun setUserData(navView: NavigationView, userProfile: UserProfile) {
-
-        // Set the user name and email into the NavigationView header
         val headerView = navView.getHeaderView(0)
         val nameTextView: TextView = headerView.findViewById(R.id.textViewName)
         val emailTextView: TextView = headerView.findViewById(R.id.textViewEmail)
@@ -95,5 +99,36 @@ class MainActivity : AppCompatActivity() {
         nameTextView.text = userProfile.first_name + " " + userProfile.last_name
         emailTextView.text = userProfile.email
         phoneTextView.text = userProfile.phone.toString()
+    }
+
+    private fun performLogout() {
+        // Show confirmation dialog
+        val builder = androidx.appcompat.app.AlertDialog.Builder(this)
+        builder.setTitle("Confirm Logout")
+        builder.setMessage("Are you sure you want to log out?")
+
+        // Set up the "Yes" button
+        builder.setPositiveButton("Yes") { dialog, _ ->
+            // Remove the token from SharedPreferences
+            sharedPreferences.edit().remove("token").apply()
+
+            // Show a toast message to indicate successful logout
+            Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show()
+
+            // Redirect to LoginActivity and finish MainActivity
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            finish()
+            dialog.dismiss() // Close the dialog
+        }
+
+        // Set up the "No" button
+        builder.setNegativeButton("No") { dialog, _ ->
+            dialog.dismiss() // Close the dialog
+        }
+
+        // Create and show the dialog
+        val dialog = builder.create()
+        dialog.show()
     }
 }
