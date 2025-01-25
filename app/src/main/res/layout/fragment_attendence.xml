@@ -4,14 +4,46 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.attendence.AttendanceFragment">
+    android:background="#F5F5F5"
+    tools:context=".ui.attendence.AttendanceFragment"
+    android:padding="16dp">
 
+    <!-- Scheduled Period Input Section -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="8dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Scheduled Period:"
+            android:textSize="16sp"
+            android:textColor="#000000"
+            android:gravity="center_vertical" />
+
+        <EditText
+            android:id="@+id/etScheduledPeriod"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="16sp"
+            android:textColor="#000000"
+            android:inputType="number"
+            android:padding="8dp"
+            android:background="@drawable/edit_text_background" />
+    </LinearLayout>
+
+    <!-- RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvAttendance"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
 
+    <!-- Submit Attendance Button -->
     <Button
         android:id="@+id/btnSubmitAttendance"
         android:layout_width="match_parent"

@@ -5,6 +5,7 @@ import android.util.Log
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.attendanceappstudent.data_class.UserLoginRequest
 import com.example.attendanceappstudent.data_class.UserLoginResponse
@@ -220,13 +221,11 @@ class ApiClient private constructor(context: Context) {
         onSuccess: (String) -> Unit,
         onError: (String) -> Unit
     ) {
+        // Append query parameters to the URL
+        val url = "${apiLinkHelper.markAttendanceApiUri()}?classId=$classId&subjectId=$subjectId&schedulePeriod=$schedulePeriod"
 
-        val url = apiLinkHelper.markAttendanceApiUri()
-
+        // Prepare JSON body for attendanceRecords (Array of Objects)
         val jsonBody = JSONObject().apply {
-            put("classId", classId)
-            put("subjectId", subjectId)
-            put("schedulePeriod", schedulePeriod)
             put("attendanceRecords", JSONArray(attendanceRecords.map {
                 JSONObject().apply {
                     put("studentId", it.studentId)
@@ -235,20 +234,14 @@ class ApiClient private constructor(context: Context) {
             }))
         }
 
-        val jsonObjectRequest = object : JsonObjectRequest(
+        val stringRequest = object : StringRequest(
             Method.POST,
-            apiLinkHelper.markAttendanceApiUri(),
-            jsonBody,
-            { response ->  // Success listener
-                try {
-                    Log.d("MarkAttendance", "Response: $response")
-                    onSuccess("Attendance marked successfully!")
-                } catch (e: Exception) {
-                    Log.e("MarkAttendance", "Parsing error: ${e.message}")
-                    onError("Failed to parse server response.")
-                }
+            url,
+            { response -> // Success listener
+                Log.d("MarkAttendance", "Response: $response")
+                onSuccess(response) // Return the plain string response
             },
-            { error ->  // Error listener
+            { error -> // Error listener
                 if (error.networkResponse != null) {
                     val errorResponse = String(error.networkResponse.data)
                     Log.e("MarkAttendance", "Error Response: $errorResponse")
@@ -263,10 +256,17 @@ class ApiClient private constructor(context: Context) {
             override fun getHeaders(): Map<String, String> {
                 return mapOf("Authorization" to "Bearer $token")
             }
+
+            override fun getBody(): ByteArray {
+                return jsonBody.toString().toByteArray(Charsets.UTF_8)
+            }
+
+            override fun getBodyContentType(): String {
+                return "application/json; charset=utf-8"
+            }
         }
 
         // Add the request to the queue
-        requestQueue.add(jsonObjectRequest)
+        requestQueue.add(stringRequest)
     }
-
 }
