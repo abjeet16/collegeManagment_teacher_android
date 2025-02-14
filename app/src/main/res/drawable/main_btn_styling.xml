@@ -1,7 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <corners android:radius="7dp"/>
-    <solid android:color="@color/tropical_blue"/>
-    <stroke android:color="@color/dark_royal_purple" android:width="1dp"/>
+    <!-- Rounded corners -->
+    <corners android:radius="10dp" />
+
+    <!-- Subtle gradient background for better contrast on white -->
+    <gradient
+        android:startColor="@color/tropical_blue_light"
+        android:endColor="@color/tropical_blue"
+        android:angle="270" />
+
+    <!-- Border stroke with a softer purple tone -->
+    <stroke
+        android:color="@color/soft_purple"
+        android:width="1dp" />
+
+    <!-- Optional: Add inner padding for spacing -->
+    <padding
+        android:left="6dp"
+        android:top="6dp"
+        android:right="6dp"
+        android:bottom="6dp" />
 </shape>

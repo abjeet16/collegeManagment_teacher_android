@@ -8,11 +8,29 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
+    <!-- Custom Colors -->
     <color name="plain_purple">#595675</color>
     <color name="royal_purple">#3F3D56</color>
     <color name="dark_royal_purple">#211F37</color>
     <color name="light_purple">#BFBED2</color>
     <color name="tropical_blue">#63C7FF</color>
+
+
+    <color name="status_available">#00FF00</color> <!-- Green for available -->
+    <color name="status_issued">#FFFF00</color>    <!-- Yellow for issued -->
+    <color name="status_damaged">#FF0000</color>  <!-- Red for damaged -->
+
+    <color name="present">#4CAF50</color> <!-- Soft Green -->
+    <color name="absent">#F44336</color> <!-- Soft Red -->
+
+    <color name="medium_purple">#9575CD</color>
+
+    <color name="bright_gray">#E0E0E0</color> <!-- Brighter shade for text -->
+
+    <color name="light_gray">#F2F2F2</color> <!-- Subtle gray background -->
+    <color name="soft_purple">#C1AEE9</color> <!-- Soft purple for border -->
+    <color name="gray">#A0A0A0</color>
+    <color name="tropical_blue_light">#D5EAF5</color> <!-- Lighter blue for gradient -->
 
     <color name="presentColor">#4CAF50</color> <!-- Green for Present -->
     <color name="absentColor">#F44336</color> <!-- Red for Absent -->
