@@ -105,6 +105,10 @@ class AttendanceFragment : Fragment() {
 
     private fun submitAttendance(attendance: Map<String, Boolean>) {
         val addAttendance = attendance.map { AddAttendance(it.key, it.value) }
+
+        // Disable button to prevent multiple clicks
+        binding.btnSubmitAttendance.isEnabled = false
+
         ApiClient.getInstance(requireContext()).markAttendance(
             token = token,
             classId = classId,
@@ -114,12 +118,16 @@ class AttendanceFragment : Fragment() {
             onSuccess = { message ->
                 Log.d("AttendanceAPI", message)
                 Toast.makeText(requireContext(), "Attendance marked successfully!", Toast.LENGTH_SHORT).show()
+
+                // Re-enable button after success
                 binding.btnSubmitAttendance.isEnabled = true
                 findNavController().popBackStack()
             },
             onError = { error ->
                 Log.e("AttendanceAPI", error)
                 Toast.makeText(requireContext(), "Failed to mark attendance: $error", Toast.LENGTH_SHORT).show()
+
+                // Re-enable button after failure
                 binding.btnSubmitAttendance.isEnabled = true
             }
         )

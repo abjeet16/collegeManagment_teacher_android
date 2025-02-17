@@ -2,6 +2,7 @@ package com.example.attendanceappstudent.network
 
 import android.content.Context
 import android.util.Log
+import com.android.volley.DefaultRetryPolicy
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.JsonObjectRequest
@@ -265,6 +266,12 @@ class ApiClient private constructor(context: Context) {
                 return "application/json; charset=utf-8"
             }
         }
+
+        stringRequest.retryPolicy = DefaultRetryPolicy(
+            30000,  // **30 seconds timeout**
+            DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+            DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+        )
 
         // Add the request to the queue
         requestQueue.add(stringRequest)

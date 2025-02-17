@@ -31,34 +31,40 @@ class LoginActivity : AppCompatActivity() {
 
     private fun loginUser() {
         // Validate input fields
-        if (binding.email.text.isEmpty()) {
+        val email = binding.email.text.toString().trim()
+        val password = binding.password.text.toString().trim()
+
+        if (email.isEmpty()) {
             Toast.makeText(this, "Email Required", Toast.LENGTH_LONG).show()
             return
         }
-        if (binding.password.text.isEmpty()) {
+        if (password.isEmpty()) {
             Toast.makeText(this, "Password Required", Toast.LENGTH_LONG).show()
             return
         }
 
-        // Create UserLoginRequest object
-        val user = UserLoginRequest(binding.email.text.toString(), binding.password.text.toString())
+        // Disable the button to prevent duplicate clicks
+        binding.signInBtn.isEnabled = false
 
-        // Call the API to log in the user
+        val user = UserLoginRequest(email, password)
+
         ApiClient.getInstance(this).loginUser(
             user = user,
             onSuccess = { response ->
-                // Save user session
                 saveUserSession(response)
 
-                // Welcome the user
                 Toast.makeText(this, "Welcome, ${response.firstName}!", Toast.LENGTH_LONG).show()
 
-                // Navigate to the Home activity
                 goToHome()
+
+                // Re-enable the button after success
+                binding.signInBtn.isEnabled = true
             },
             onError = { error ->
-                // Handle login error
                 Toast.makeText(this, "Login failed: $error", Toast.LENGTH_LONG).show()
+
+                // Re-enable the button after failure
+                binding.signInBtn.isEnabled = true
             }
         )
     }

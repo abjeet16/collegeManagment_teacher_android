@@ -12,27 +12,22 @@ class AttendanceAdapter(
     private val onSubmitAttendance: (Map<String, Boolean>) -> Unit
 ) : RecyclerView.Adapter<AttendanceAdapter.AttendanceViewHolder>() {
 
-    private val attendanceMap = mutableMapOf<String, Boolean>()
-
-    init {
-        // Ensure every student is present in the map
+    private val attendanceMap = mutableMapOf<String, Boolean>().apply {
         students.forEach { student ->
-            if (!attendanceMap.containsKey(student.studentId)) {
-                attendanceMap[student.studentId] = false // Default to absent
-            }
+            put(student.studentId, getOrDefault(student.studentId, false)) // Default to absent
         }
     }
 
     inner class AttendanceViewHolder(private val binding: AttendanceItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(student: AllStudentsOfAClass) {
-            // Log each student when binding
             Log.d("AttendanceAdapter", "Binding student: ${student.studentName} (ID: ${student.studentId})")
 
             binding.student = student
-            binding.toggleAttendance.isChecked = attendanceMap[student.studentId] ?: false
+            binding.toggleAttendance.setOnCheckedChangeListener(null) // Remove previous listener
 
-            // Update attendanceMap when checkbox changes
+            binding.toggleAttendance.isChecked = attendanceMap[student.studentId] ?: false // Maintain state
+
             binding.toggleAttendance.setOnCheckedChangeListener { _, isChecked ->
                 attendanceMap[student.studentId] = isChecked
                 Log.d("AttendanceAdapter", "Updated attendance for ${student.studentName}: $isChecked")
@@ -52,15 +47,13 @@ class AttendanceAdapter(
     override fun getItemCount() = students.size
 
     fun submitAttendance(): Map<String, Boolean> {
-        Log.d("AttendanceAdapter11", "Submitting Attendance - Total students: ${students.size}")
+        Log.d("AttendanceAdapter", "Submitting Attendance - Total students: ${students.size}")
 
         students.forEach { student ->
             val isPresent = attendanceMap[student.studentId] ?: false
-            Log.d("AttendanceAdapter11", "Student: ${student.studentName} (ID: ${student.studentId}) - Present: $isPresent")
+            Log.d("AttendanceAdapter", "Student: ${student.studentName} (ID: ${student.studentId}) - Present: $isPresent")
         }
 
         return attendanceMap
     }
 }
-
-
