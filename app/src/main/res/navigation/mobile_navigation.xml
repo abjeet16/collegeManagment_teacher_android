@@ -5,27 +5,66 @@
     android:id="@+id/mobile_navigation"
     app:startDestination="@+id/nav_home">
 
+    <!-- Home Fragment -->
     <fragment
         android:id="@+id/nav_home"
         android:name="com.example.attendenceappteacher.ui.home.HomeFragment"
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_home" >
         <action
-            android:id="@+id/action_nav_home_to_attendenceFragment"
-            app:destination="@id/attendenceFragment" />
+            android:id="@+id/action_nav_home_to_attendanceMenuFragment"
+            app:destination="@id/attendanceMenuFragment">
+            <argument
+                android:name="classId"
+                app:argType="long"
+                android:defaultValue="-1L" />
+            <argument
+                android:name="subjectId"
+                app:argType="long"
+                android:defaultValue="-1L" />
+        </action>
     </fragment>
 
+    <!-- Attendance Menu Fragment -->
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="com.example.attendenceappteacher.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
+        android:id="@+id/attendanceMenuFragment"
+        android:name="com.example.attendenceappteacher.ui.AttendanceMenu.AttendanceMenuFragment"
+        android:label="fragment_attendance_menu"
+        tools:layout="@layout/fragment_attendance_menu" >
 
-    <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="com.example.attendenceappteacher.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
+        <argument
+            android:name="classId"
+            app:argType="long"
+            android:defaultValue="-1L" />
+        <argument
+            android:name="subjectId"
+            app:argType="long"
+            android:defaultValue="-1L" />
+
+        <action
+            android:id="@+id/action_attendanceMenuFragment_to_attendenceFragment"
+            app:destination="@id/attendenceFragment">
+            <argument
+                android:name="classId"
+                app:argType="long" />
+            <argument
+                android:name="subjectId"
+                app:argType="long" />
+        </action>
+
+        <action
+            android:id="@+id/action_attendanceMenuFragment_to_studentAttendenceFragment"
+            app:destination="@id/studentAttendenceFragment">
+            <argument
+                android:name="classId"
+                app:argType="long" />
+            <argument
+                android:name="subjectId"
+                app:argType="long" />
+        </action>
+    </fragment>
+
+    <!-- Attendance Fragment -->
     <fragment
         android:id="@+id/attendenceFragment"
         android:name="com.example.attendenceappteacher.ui.attendence.AttendanceFragment"
@@ -40,4 +79,23 @@
             app:argType="long"
             android:defaultValue="-1L" />
     </fragment>
+
+    <!-- Student Attendance Fragment -->
+    <fragment
+        android:id="@+id/studentAttendenceFragment"
+        android:name="com.example.attendenceappteacher.ui.studentAttendence.StudentAttendanceFragment"
+        android:label="fragment_student_attendence"
+        tools:layout="@layout/fragment_student_attendence" >
+
+        <argument
+            android:name="classId"
+            app:argType="long"
+            android:defaultValue="-1L" />
+        <argument
+            android:name="subjectId"
+            app:argType="long"
+            android:defaultValue="-1L" />
+    </fragment>
+
 </navigation>
+

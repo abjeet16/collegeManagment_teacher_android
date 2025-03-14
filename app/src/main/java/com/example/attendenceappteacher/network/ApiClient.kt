@@ -3,6 +3,7 @@ package com.example.attendanceappstudent.network
 import android.content.Context
 import android.util.Log
 import com.android.volley.DefaultRetryPolicy
+import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.JsonObjectRequest
@@ -12,6 +13,7 @@ import com.example.attendanceappstudent.data_class.UserLoginRequest
 import com.example.attendanceappstudent.data_class.UserLoginResponse
 import com.example.attendanceappstudent.data_class.UserProfile
 import com.example.attendanceappstudent.helper.ApiLinkHelper
+import com.example.attendanceappteacher.data_class.StudentsAttendance
 import com.example.attendenceappteacher.data_class.AddAttendance
 import com.example.attendenceappteacher.data_class.AllStudentsOfAClass
 import com.example.attendenceappteacher.data_class.MyClassResponse
@@ -275,5 +277,53 @@ class ApiClient private constructor(context: Context) {
 
         // Add the request to the queue
         requestQueue.add(stringRequest)
+    }
+
+    fun getAttendanceSummary(
+        token: String,
+        classId: Int,
+        subjectId: Int,
+        onSuccess: (List<StudentsAttendance.StudentAttendanceItem>) -> Unit,
+        onError: (String) -> Unit
+    ) {
+        val url =  apiLinkHelper.getStudentAttendenceSummary(classId, subjectId)
+
+        val jsonArrayRequest = object : JsonArrayRequest(
+            Request.Method.GET,
+            url,
+            null,
+            { response ->
+                try {
+                    // Convert JSON response to a list of studentsAttendenceItem
+                    val attendanceSummary = Gson().fromJson(
+                        response.toString(),
+                        Array<StudentsAttendance.StudentAttendanceItem>::class.java
+                    ).toList()
+
+                    Log.d("AttendanceSummary", "Retrieved attendance data: $attendanceSummary")
+                    onSuccess(attendanceSummary)
+                } catch (e: Exception) {
+                    Log.e("AttendanceSummary", "Parsing error: ${e.message}")
+                    onError("Failed to parse the server response.")
+                }
+            },
+            { error ->
+                if (error.networkResponse != null) {
+                    val errorResponse = String(error.networkResponse.data)
+                    Log.e("ApiClient", "Error Response: $errorResponse")
+                    onError(errorResponse)
+                } else {
+                    Log.e("ApiClient", "Unknown Error: ${error.message}")
+                    onError(error.message ?: "Unknown error occurred.")
+                }
+            }
+        ) {
+            override fun getHeaders(): Map<String, String> {
+                return mapOf("Authorization" to "Bearer $token")
+            }
+        }
+
+        // Add the request to the queue
+        requestQueue.add(jsonArrayRequest)
     }
 }

@@ -75,7 +75,7 @@ class HomeFragment : Fragment() {
         val subjectId: Long = item.get(position).subject?.id?.toLong() ?: -1
 
         // Use Navigation Component to navigate to attendenceFragment
-        val action = HomeFragmentDirections.actionNavHomeToAttendenceFragment(classId, subjectId)
+        val action = HomeFragmentDirections.actionNavHomeToAttendanceMenuFragment(classId, subjectId)
         findNavController().navigate(action)
     }
 }
