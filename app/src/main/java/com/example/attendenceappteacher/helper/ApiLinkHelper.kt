@@ -1,17 +1,17 @@
 package com.example.attendanceappstudent.helper
 
 class ApiLinkHelper {
-    val BASE_URL: String = "https://collegemanagment-springboot-production.up.railway.app/api/v1/"
+    val BASE_URL: String = "http://abjeet.ap-south-1.elasticbeanstalk.com/api/v1/"
 
     fun loginUserApiUri(): String {
         return BASE_URL + "auth/user/login"
     }
 
-    fun getUserProfileApiUri(): String? {
+    fun getUserProfileApiUri(): String{
         return BASE_URL+"User/my_profile"
     }
 
-    fun getMyClassesApiUri(): String? {
+    fun getMyClassesApiUri(): String {
         return BASE_URL+"teacher/my_classes"
     }
 
