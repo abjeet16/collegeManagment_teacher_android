@@ -1,0 +1,12 @@
+
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <corners android:radius="0dp" />
+
+    <stroke
+        android:width="5dp"
+        android:color="@color/nie_logo_border" /> <!-- Enter your desired color here, e.g., #FF0000 -->
+
+    <solid android:color="@android:color/transparent" />
+</shape>

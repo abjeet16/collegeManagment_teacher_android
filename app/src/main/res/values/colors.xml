@@ -34,4 +34,6 @@
 
     <color name="presentColor">#4CAF50</color> <!-- Green for Present -->
     <color name="absentColor">#F44336</color> <!-- Red for Absent -->
+
+    <color name="nie_logo_border">#242667</color>
 </resources>
