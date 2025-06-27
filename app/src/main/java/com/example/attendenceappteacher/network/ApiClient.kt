@@ -14,11 +14,11 @@ import com.example.attendanceappstudent.data_class.UserLoginResponse
 import com.example.attendanceappstudent.data_class.UserProfile
 import com.example.attendanceappstudent.helper.ApiLinkHelper
 import com.example.attendanceappteacher.data_class.StudentsAttendance
-import com.example.attendenceappteacher.data_class.AddAttendance
+import com.example.attendenceappteacher.data_class.AddAttendanceRequest
 import com.example.attendenceappteacher.data_class.AllStudentsOfAClass
+import com.example.attendenceappteacher.data_class.AttendanceRequest
 import com.example.attendenceappteacher.data_class.MyClassResponse
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -217,34 +217,40 @@ class ApiClient private constructor(context: Context) {
 
     fun markAttendance(
         token: String,
-        classId: Long,
-        subjectId: Long,
-        schedulePeriod: Int,
-        attendanceRecords: List<AddAttendance>,
+        attendanceRequest: AttendanceRequest, // <-- wrapped request object
         onSuccess: (String) -> Unit,
         onError: (String) -> Unit
     ) {
-        // Append query parameters to the URL
-        val url = "${apiLinkHelper.markAttendanceApiUri()}?classId=$classId&subjectId=$subjectId&schedulePeriod=$schedulePeriod"
+        val url = apiLinkHelper.markAttendanceApiUri() // No query params
 
-        // Prepare JSON body for attendanceRecords (Array of Objects)
-        val jsonBody = JSONObject().apply {
-            put("attendanceRecords", JSONArray(attendanceRecords.map {
-                JSONObject().apply {
+        // Convert attendance records to JSONArray
+        val attendanceArray = JSONArray().apply {
+            attendanceRequest.attendanceRecords.forEach {
+                put(JSONObject().apply {
                     put("studentId", it.studentId)
-                    put("isPresent", it.isPresent)
-                }
-            }))
+                    put("isPresent", it.status)
+                })
+            }
+        }
+
+        // Construct the full JSON body
+        val jsonBody = JSONObject().apply {
+            put("classId", attendanceRequest.classId)
+            put("subjectId", attendanceRequest.subjectId)
+            put("schedulePeriod", attendanceRequest.schedulePeriod)
+            // You can add attendanceDate if backend doesn't default it
+            // put("attendanceDate", LocalDate.now().toString())
+            put("attendanceRecords", attendanceArray)
         }
 
         val stringRequest = object : StringRequest(
             Method.POST,
             url,
-            { response -> // Success listener
+            { response ->
                 Log.d("MarkAttendance", "Response: $response")
-                onSuccess(response) // Return the plain string response
+                onSuccess(response)
             },
-            { error -> // Error listener
+            { error ->
                 if (error.networkResponse != null) {
                     val errorResponse = String(error.networkResponse.data)
                     Log.e("MarkAttendance", "Error Response: $errorResponse")
@@ -255,7 +261,6 @@ class ApiClient private constructor(context: Context) {
                 }
             }
         ) {
-            // Add Authorization header with Bearer token
             override fun getHeaders(): Map<String, String> {
                 return mapOf("Authorization" to "Bearer $token")
             }
@@ -270,12 +275,11 @@ class ApiClient private constructor(context: Context) {
         }
 
         stringRequest.retryPolicy = DefaultRetryPolicy(
-            30000,  // **30 seconds timeout**
+            30000,
             DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
             DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
         )
 
-        // Add the request to the queue
         requestQueue.add(stringRequest)
     }
 
@@ -286,7 +290,7 @@ class ApiClient private constructor(context: Context) {
         onSuccess: (List<StudentsAttendance.StudentAttendanceItem>) -> Unit,
         onError: (String) -> Unit
     ) {
-        val url =  apiLinkHelper.getStudentAttendenceSummary(classId, subjectId)
+        val url =  apiLinkHelper.studentAttendanceSummary(classId, subjectId)
 
         val jsonArrayRequest = object : JsonArrayRequest(
             Request.Method.GET,

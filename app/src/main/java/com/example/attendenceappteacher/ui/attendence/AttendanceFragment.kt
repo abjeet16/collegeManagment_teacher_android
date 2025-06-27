@@ -14,8 +14,9 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.attendanceappstudent.network.ApiClient
 import com.example.attendenceappteacher.adapter.AttendanceAdapter
-import com.example.attendenceappteacher.data_class.AddAttendance
+import com.example.attendenceappteacher.data_class.AddAttendanceRequest
 import com.example.attendenceappteacher.data_class.AllStudentsOfAClass
+import com.example.attendenceappteacher.data_class.AttendanceRequest
 import com.example.attendenceappteacher.databinding.FragmentAttendenceBinding
 
 class AttendanceFragment : Fragment() {
@@ -104,35 +105,36 @@ class AttendanceFragment : Fragment() {
     }
 
     private fun submitAttendance(attendance: Map<String, Boolean>) {
-        val addAttendance = attendance.map { AddAttendance(it.key, it.value) }
+        val attendanceRecords = attendance.map { (studentId, present) ->
+            AddAttendanceRequest(studentId = studentId, status = present)
+        }
 
-        // Disable button to prevent multiple clicks
+        val attendanceRequest = AttendanceRequest(
+            classId = classId.toLong(),
+            subjectId = subjectId.toLong(),
+            schedulePeriod = scheduledPeriod,
+            attendanceRecords = attendanceRecords
+            // attendanceDate is handled by backend (default to now)
+        )
+
         binding.btnSubmitAttendance.isEnabled = false
 
         ApiClient.getInstance(requireContext()).markAttendance(
             token = token,
-            classId = classId,
-            subjectId = subjectId,
-            schedulePeriod = scheduledPeriod,
-            attendanceRecords = addAttendance,
+            attendanceRequest = attendanceRequest,
             onSuccess = { message ->
                 Log.d("AttendanceAPI", message)
                 Toast.makeText(requireContext(), "Attendance marked successfully!", Toast.LENGTH_SHORT).show()
-
-                // Re-enable button after success
                 binding.btnSubmitAttendance.isEnabled = true
                 findNavController().popBackStack()
             },
             onError = { error ->
                 Log.e("AttendanceAPI", error)
                 Toast.makeText(requireContext(), "Failed to mark attendance: $error", Toast.LENGTH_SHORT).show()
-
-                // Re-enable button after failure
                 binding.btnSubmitAttendance.isEnabled = true
             }
         )
     }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

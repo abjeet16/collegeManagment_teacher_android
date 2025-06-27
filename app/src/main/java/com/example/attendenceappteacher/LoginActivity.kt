@@ -31,7 +31,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun loginUser() {
         // Validate input fields
-        val email = binding.email.text.toString().trim()
+        val email = binding.UniversityId.text.toString().trim()
         val password = binding.password.text.toString().trim()
 
         if (email.isEmpty()) {

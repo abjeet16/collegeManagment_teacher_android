@@ -23,7 +23,7 @@ class ApiLinkHelper {
         return BASE_URL + "teacher/mark_attendance"
     }
 
-    fun getStudentAttendenceSummary( classId: Int,subjectId: Int):String{
+    fun studentAttendanceSummary(classId: Int, subjectId: Int):String{
         return BASE_URL+"teacher/attendance/${classId}/${subjectId}"
     }
 }
